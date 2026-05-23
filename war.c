@@ -15,12 +15,20 @@
 // ============================================================================
 
 // Inclusão das bibliotecas padrão necessárias para entrada/saída, alocação de memória, manipulação de strings e tempo.
+#include <stdio.h>
+#include <string.h> // Para strcspn(), uma biblioteca para manipular strings
 
 // --- Constantes Globais ---
 // Definem valores fixos para o número de territórios, missões e tamanho máximo de strings, facilitando a manutenção.
+#define MAX_TER 5 // Número máximo de territórios a cadastrar
 
 // --- Estrutura de Dados ---
 // Define a estrutura para um território, contendo seu nome, a cor do exército que o domina e o número de tropas.
+typedef struct {
+    char nome[30];
+    char cor[10];
+    int tropas;
+} Territorio;
 
 // --- Protótipos das Funções ---
 // Declarações antecipadas de todas as funções que serão usadas no programa, organizadas por categoria.
@@ -28,6 +36,10 @@
 // Funções de interface com o usuário:
 // Funções de lógica principal do jogo:
 // Função utilitária:
+void limparBufferEntrada() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
 
 // --- Função Principal (main) ---
 // Função principal que orquestra o fluxo do jogo, chamando as outras funções em ordem.
@@ -38,6 +50,49 @@ int main() {
     // - Aloca a memória para o mapa do mundo e verifica se a alocação foi bem-sucedida.
     // - Preenche os territórios com seus dados iniciais (tropas, donos, etc.).
     // - Define a cor do jogador e sorteia sua missão secreta.
+    Territorio territorios[MAX_TER]; // Vetor de structs para armazenar os territórios
+
+    printf("###########################################################\n");
+    printf("Vamos cadastrar %d territórios iniciais para nosso mundo.\n", MAX_TER);
+    
+    // --- Cadastro dos territórios ---
+    for (int i = 0; i < MAX_TER; i++) {
+        printf("\n--- Cadastro Território - %d ---\n", i + 1);
+
+        printf("Nome do Território: ");
+        fgets(territorios[i].nome, sizeof(territorios[i].nome), stdin);
+        territorios[i].nome[strcspn(territorios[i].nome, "\n")] = '\0'; // Remove o '\n'
+
+        printf("Cor do Exército (ex: Azul, Verde): ");
+        fgets(territorios[i].cor, sizeof(territorios[i].cor), stdin);
+        territorios[i].cor[strcspn(territorios[i].cor, "\n")] = '\0'; // Remove o '\n'
+
+        printf("Número de Tropas: ");
+        scanf("%d", &territorios[i].tropas);
+
+        limparBufferEntrada(); // limpar o '\n' deixado pelo scanf.
+    }
+
+    printf("\nCadastro inicial concluído com sucesso.\n");
+    printf("\nPressione Enter para continuar...");
+    getchar(); // Uma pausa para o usuário ler a messagem
+    
+    // --- Exibir os dados cadastrados ---
+    printf("\n###########################################################\n");
+    printf("    MAPA DO MUNDO - ESTADO ATUAL\n");
+    printf("###########################################################\n");
+
+    for (int i = 0; i < MAX_TER; i++) {
+        printf("\nTERRITÓRIO %d:\n", i + 1);
+        printf("    - Nome: %s\n", territorios[i].nome);
+        printf("    - Dominado por: Exército %s\n", territorios[i].cor);
+        printf("    - Tropas: %d\n", territorios[i].tropas);
+    }
+
+    printf("\nPressione Enter para encerra...");
+    getchar(); // Uma pausa para o usuário ler a messagem, antes de encerra o app
+
+    printf("\nFim do programa.\n");
 
     // 2. Laço Principal do Jogo (Game Loop):
     // - Roda em um loop 'do-while' que continua até o jogador sair (opção 0) ou vencer.
